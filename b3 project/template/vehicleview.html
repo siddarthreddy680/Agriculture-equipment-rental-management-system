@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+<div class="container">
+    <h2 class="text-center">Vehicle Details</h2>
+    <div class="vehicle-info">
+        <p><strong>Name:</strong> {{ vehicle.name }}</p>
+        <p><strong>Brand:</strong> {{ vehicle.brand }}</p>
+        <p><strong>Model:</strong> {{ vehicle.model }}</p>
+        <p><strong>Registration Number:</strong> {{ vehicle.registration_number }}</p>
+        <p><strong>Daily Rate:</strong> ${{ vehicle.daily_rate }}</p>
+        <p><strong>Availability:</strong> 
+        <button class="btn btn-success btn-lg" onclick="openBookingPopup()">View Booked Dates</button></p>
+    </div>
+
+    <h3 class="text-center">Available Equipment</h3>
+    <form method="POST" action="{% url 'book_vehicle' pk=vehicle.id %}">
+        {% csrf_token %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Condition</th>
+                    <th>Daily Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for equipment in equipments %}
+                <tr>
+                    <td><input type="checkbox" name="equipment" value="{{ equipment.id }}" class="equipment-checkbox"></td>
+                    <td>{{ equipment.name }}</td>
+                    <td>{{ equipment.category }}</td>
+                    <td>{{ equipment.description }}</td>
+                    <td>{{ equipment.condition }}</td>
+                    <td class="equipment-rate">${{ equipment.daily_rate }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <h3 class="text-center">Booking Details</h3>
+        <div class="form-group">
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" class="form-control form-control-lg" required>
+        </div>
+        <div class="form-group">
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" class="form-control form-control-lg" required>
+        </div>
+        <button type="submit" class="btn btn-success btn-sm">Book Now</button>
+    </form>
+</div>
+
+<!-- Popup Modal -->
+<div id="bookingPopup" class="popup">
+    <style>
+        .table, .booking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th, .table td, .booking-table th, .booking-table td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .table th, .booking-table th {
+            background-color: #228b22;
+            color: white;
+            font-size: 16px;
+        }
+        .table td, .booking-table td {
+            background-color: #f9f9f9;
+        }
+    </style>
+    <div class="popup-content">
+        <span class="close" onclick="closeBookingPopup()">&times;</span>
+        <h3>Booked Dates</h3>
+        {% if bookings %}
+            <table class="booking-table">
+                <thead>
+                    <tr>
+                        <th>From Date</th>
+                        <th>To Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.start_date }}</td>
+                        <td>{{ booking.end_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No bookings yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 1000px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+.vehicle-info p {
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.table th, .table td {
+    padding: 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+.table th {
+    background-color: #228b22;
+    color: white;
+    font-size: 16px;
+}
+.table td {
+    background-color: #f9f9f9;
+}
+.btn-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 6px;
+}
+.btn-success:hover {
+    background-color: #218838;
+}
+button{
+    cursor: pointer;
+}
+
+/* Popup Styling */
+.popup {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.popup-content {
+    background-color: #fff;
+    padding: 25px;
+    width: 450px;
+    margin: 15% auto;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+}
+.close {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    font-size: 30px;
+    cursor: pointer;
+    background-color: black;
+    padding: 5px 15px;
+    border-radius: 50%;
+    color: white;
+}
+</style>
+
+<script>
+function openBookingPopup() {
+    document.getElementById("bookingPopup").style.display = "block";
+}
+function closeBookingPopup() {
+    document.getElementById("bookingPopup").style.display = "none";
+}
+</script>
+
+{% endblock %}

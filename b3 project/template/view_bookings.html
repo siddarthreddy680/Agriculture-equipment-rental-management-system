@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+<div class="container">
+    <h2 class="text-center">{% if user.is_staff %}Pending Bookings{% else %}My Bookings{% endif %}</h2>
+    {% if bookings %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Vehicle</th>
+                    <th>Equipment</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>Status</th>
+                    {% if confirmed %}
+                    {% else %}
+                    <th>Action</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.vehicle.name }}</td>
+                    <td>{% if booking.equipment %}{{ booking.equipment.name }}{% else %}None{% endif %}</td>
+                    <td>{{ booking.start_date }}</td>
+                    <td>{{ booking.end_date }}</td>
+                    <td>{{ booking.book_status }}</td>
+                    {% if confirmed %}
+                    {% else %}
+                    <td>
+                        {% if user.is_staff %}
+                        {% if booking.book_status == "Pending" %}
+                            <a href="{% url 'cancel_booking' pk=booking.id %}" class="btn btn-danger btn-sm">Cancel</a>
+                            <a href="{% url 'confirm_booking' pk=booking.id %}" class="btn btn-success btn-sm">Confirm</a>
+                        {% else %}
+                            <span class="text-muted">Cancelled</span>
+                        {% endif %}
+                        {% else %}
+                        {% if booking.book_status == "Pending" %}
+                            <a href="{% url 'cancel_booking' pk=booking.id %}" class="btn btn-danger btn-sm">Cancel</a>
+                        {% else %}
+                            <span class="text-muted">Cancelled</span>
+                        {% endif %}
+                    {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-center">No bookings found.</p>
+    {% endif %}
+</div>
+
+<style>
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.table th, .table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+.table th {
+    background-color: #228b22;
+    color: white;
+}
+.table td {
+    background-color: #f9f9f9;
+}
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+.btn-danger:hover {
+    background-color: #c82333;
+}
+</style>
+{% endblock %}

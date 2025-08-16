@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+<div>
+  <style>
+    img{
+      height: 400px;
+    }
+  </style>
+</div>
+<div class="content">
+  <h1 ><marquee>Agriculture Equipment Rental Management System: Empowering Farmers with Accessible and Efficient Machinery Solutions</marquee></h1>
+</div>
+<div style="display: flex;justify-content:center">
+  {% if messages %}
+  {% for message in messages %}
+      <p class="message">{{ message }}</p>
+  {% endfor %}
+  {% endif %}
+  <img style="width: 800px;" src="https://www.rishabhsoft.com/wp-content/uploads/2022/04/RSPL-Std-Case-Farming-Equipment-Hiring-Platform-Development-.jpg">
+</div>
+{% endblock %}

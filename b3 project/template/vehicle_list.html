@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+<div class="container">
+    <h2 class="text-center">{% if user.is_staff %}My {% endif %}Vehicles</h2>
+    
+    {% if vehicles %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Model</th>
+                    <th>Registration Number</th>
+                    <th>Hourly Rate</th>
+                    {% if user.is_staff %}
+                    <th>view equipment</th>
+                    {% else %}
+                    <th>Book</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for vehicle in vehicles %}
+                <tr>
+                    <td>{{ vehicle.name }}</td>
+                    <td>{{ vehicle.brand }}</td>
+                    <td>{{ vehicle.model }}</td>
+                    <td>{{ vehicle.registration_number }}</td>
+                    <td>${{ vehicle.daily_rate }}</td>
+                    {% if user.is_staff %}
+                    <td ><a href="{% url 'equipment_list' pk=vehicle.id %}" class="btn btn-primary">equipment list</a></td>
+                    {% else %}
+                    <td ><a href="{% url 'equipment_list' pk=vehicle.id %}" class="btn btn-primary">Book</a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-center">No vehicles added yet.</p>
+    {% endif %}
+    {% if user.is_staff %}
+    <div class="text-center">
+        <a href="{% url 'addvechile' %}" class="btn btn-primary">Add Vehicle</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.table th, .table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+.table th {
+    background-color: #228b22;
+    color: white;
+}
+.table td {
+    background-color: #f9f9f9;
+}
+.btn {
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+</style>
+{% endblock %}
